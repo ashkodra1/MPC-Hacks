@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import DetectorPage from './DetectorPage'
 import './App.css'
 
 const navItems = [
@@ -8,8 +10,14 @@ const navItems = [
 const fallacyTags = ['Straw man', 'False cause', 'Ad hominem']
 
 function App() {
+  const [page, setPage] = useState<'home' | 'detector'>('home')
+
+  if (page === 'detector') {
+    return <DetectorPage navItems={navItems} />
+  }
+
   return (
-    <main className="page-shell">
+    <main className="page-shell home-shell">
       <div className="orbital orbital-top" aria-hidden="true" />
       <div className="ambient-glow" aria-hidden="true" />
 
@@ -37,9 +45,9 @@ function App() {
           </p>
 
           <div className="hero-actions">
-            <a className="primary-action" href="#get-started">
+            <button className="primary-action" type="button" onClick={() => setPage('detector')}>
               Get Started
-            </a>
+            </button>
           </div>
         </div>
 
