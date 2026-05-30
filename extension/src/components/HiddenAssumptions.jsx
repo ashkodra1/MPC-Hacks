@@ -1,17 +1,27 @@
 import React from "react";
 
-function HiddenAssumptions() {
+function HiddenAssumptions({ analysis }) {
+  const assumptions = analysis?.hidden_assumptions || [];
+
+  if (assumptions.length === 0) {
     return (
       <section className="card">
-        <h3>Assumptions</h3>
-  
-        <ul>
-          <li>Correlation = causation</li>
-          <li>Only two choices</li>
-          <li>No other causes</li>
-        </ul>
+        <h3>Hidden Assumptions</h3>
+        <p>No hidden assumptions detected</p>
       </section>
     );
   }
-  
-  export default HiddenAssumptions;
+
+  return (
+    <section className="card">
+      <h3>Hidden Assumptions</h3>
+      <ul>
+        {assumptions.map((assumption, idx) => (
+          <li key={idx}>{assumption}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+export default HiddenAssumptions;

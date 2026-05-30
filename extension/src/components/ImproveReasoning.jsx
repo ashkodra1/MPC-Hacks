@@ -1,17 +1,23 @@
 import React from "react";
 
-function ImproveReasoning() {
+function ImproveReasoning({ analysis }) {
+  const steelman = analysis?.steelman_version || "";
+
+  if (!steelman) {
     return (
       <section className="card">
-        <h3>Improve</h3>
-  
-        <p>Add direct evidence and address alternatives.</p>
-  
-        <button className="primary-button">
-          Improve Argument
-        </button>
+        <h3>How to Improve</h3>
+        <p>No improvements suggested</p>
       </section>
     );
   }
-  
-  export default ImproveReasoning;
+
+  return (
+    <section className="card">
+      <h3>How to Improve</h3>
+      <p>{steelman}</p>
+    </section>
+  );
+}
+
+export default ImproveReasoning;
