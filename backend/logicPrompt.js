@@ -30,7 +30,10 @@ Return ONLY valid JSON in this exact format:
   "possible_fallacies": [
     {
       "name": "",
+      "quote": "",
       "explanation": "",
+      "timestamp": "",
+      "confidence": 0,
       "severity": "low | medium | high"
     }
   ],
@@ -55,6 +58,8 @@ Rules:
 - Do not force a fallacy if none is clearly present.
 - An argument may contain zero fallacies.
 - Distinguish between weak reasoning and a logical fallacy.
+- Use timestamp values when the transcript includes them.
+- If you cannot locate a timestamp, return an empty string or null.
 - The logic_score must be from 0 to 100.
 - 90-100 = very strong reasoning.
 - 70-89 = mostly strong but has assumptions.

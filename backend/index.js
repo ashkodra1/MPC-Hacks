@@ -79,6 +79,12 @@ app.post("/analyze-video", async (req, res) => {
     const { videoId, transcript } = await getYoutubeTranscript(url);
     const analysis = await analyzeLogic(transcript);
 
+    console.log("[analyze-video] videoId:", videoId);
+    console.log(
+      "[analyze-video] analysis:",
+      JSON.stringify(analysis, null, 2)
+    );
+
     res.json({
       videoId,
       transcript,
