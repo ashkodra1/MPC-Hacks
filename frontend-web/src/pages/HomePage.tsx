@@ -1,6 +1,10 @@
 import AnalysisPanel from '../components/AnalysisPanel'
 
-function HomePage() {
+type HomePageProps = {
+  onGetStarted: () => void
+}
+
+function HomePage({ onGetStarted }: HomePageProps) {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
@@ -11,9 +15,9 @@ function HomePage() {
         </p>
 
         <div className="hero-actions">
-          <a className="primary-action" href="#get-started">
+          <button className="primary-action" type="button" onClick={onGetStarted}>
             Get Started
-          </a>
+          </button>
         </div>
       </div>
 
