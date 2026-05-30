@@ -11,9 +11,9 @@ type HeaderProps = {
 }
 
 const navItems: NavItem[] = [
-  { label: 'About', page: 'about' },
   { label: 'How it works', page: 'home' },
   { label: 'Demo', page: 'home' },
+  { label: 'About', page: 'about' },
 ]
 
 function Header({ currentPage, onNavigate }: HeaderProps) {
@@ -32,7 +32,8 @@ function Header({ currentPage, onNavigate }: HeaderProps) {
       <nav className="site-nav" aria-label="Primary navigation">
         {navItems.map((item) => (
           <button
-            className={currentPage === item.page && item.page === 'about' ? 'active' : undefined}
+            aria-current={currentPage === item.page ? 'page' : undefined}
+            className={currentPage === item.page ? 'active' : undefined}
             key={item.label}
             type="button"
             onClick={() => onNavigate(item.page)}

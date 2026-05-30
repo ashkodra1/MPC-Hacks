@@ -1,4 +1,9 @@
-const teamMembers = [
+type TeamMember = {
+  name: string
+  program: string
+}
+
+const teamMembers: TeamMember[] = [
   { name: 'Allison Shkodra', program: 'Software Engineering' },
   { name: 'Zineb Bamouh', program: 'Computer Engineering' },
   { name: 'Srabanti Mazumdar', program: 'Software Engineering' },

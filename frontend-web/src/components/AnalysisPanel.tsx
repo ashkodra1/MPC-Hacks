@@ -1,4 +1,4 @@
-const fallacyTags = ['Straw man', 'False cause', 'Ad hominem']
+const fallacyTags: string[] = ['Straw man', 'False cause', 'Ad hominem']
 
 function AnalysisPanel() {
   return (
