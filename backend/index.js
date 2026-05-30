@@ -66,10 +66,9 @@ app.post("/transcript", async (req, res) => {
   }
 });
 
-app.get("/analyze-video", async (req, res) => {
+app.post("/analyze-video", async (req, res) => {
   try {
-    const url =
-      "https://youtu.be/WV29R1M25n8?si=xxIK4ICDkcEouWJt";
+    const { url } = req.body;
 
     if (!url || url.trim().length === 0) {
       return res.status(400).json({
