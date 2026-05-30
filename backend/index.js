@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { analyzeLogic } from "./geminiService.js";
 
 dotenv.config();
 
@@ -15,25 +16,24 @@ app.get("/", (req, res) => {
   res.send("Backend is working");
 });
 
-app.post("/analyze", async (req, res) => {
-    try {
-      const { text } = req.body;
-  
-      if (!text || text.trim().length === 0) {
-        return res.status(400).json({ error: "No argument text provided" });
-      }
-  
-      const prompt = buildLogicPrompt(text);
-  
-      // call Gemini/OpenAI here
-      const analysis = await analyzeWithAI(prompt);
-  
-      res.json(analysis);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Failed to analyze argument" });
+app.get("/analyze", async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ error: "No argument text provided" });
     }
-  });
+
+    //const text = "Taxes increased last year and unemployment also increased. Therefore, higher taxes caused unemployment.";
+    const analysis = await analyzeLogic(text);
+
+    res.json(analysis);
+  } catch (error) {
+    console.log("API key loaded:", !!process.env.GEMINI_API_KEY);
+    console.error(error);
+    res.status(500).json({ error: "Failed to analyze argument" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
