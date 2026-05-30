@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
-
-type NavItem = {
-  label: string
-  href: string
-}
+import Header from './components/Header'
+import type { Page } from './components/Header'
 
 type DetectorPageProps = {
-  navItems: NavItem[]
+  currentPage: Page
+  onNavigate: (page: Page) => void
 }
 
 const detectedFallacies = [
@@ -53,7 +51,7 @@ function getYouTubeId(url: string) {
   }
 }
 
-function DetectorPage({ navItems }: DetectorPageProps) {
+function DetectorPage({ currentPage, onNavigate }: DetectorPageProps) {
   const [youtubeUrl, setYoutubeUrl] = useState('')
   const [submittedUrl, setSubmittedUrl] = useState('')
   const [hasSubmitted, setHasSubmitted] = useState(false)
@@ -69,20 +67,7 @@ function DetectorPage({ navItems }: DetectorPageProps) {
     <main className="page-shell detector-shell">
       <div className="ambient-glow" aria-hidden="true" />
 
-      <header className="site-header detector-header">
-        <a className="brand" href="/" aria-label="Pikmin home">
-          <span className="brand-mark" />
-          Pikmin
-        </a>
-
-        <nav className="site-nav" aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <Header currentPage={currentPage} onNavigate={onNavigate} variant="detector" />
 
       <section className="detector-intro">
         <div>
