@@ -82,9 +82,10 @@
 }
 
 .brand,
-.site-nav a,
+.site-nav button,
 .header-action,
-.hero-actions a {
+.hero-actions a,
+.hero-actions button {
   color: inherit;
   text-decoration: none;
 }
@@ -93,8 +94,14 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
+  width: max-content;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
   font-size: 16px;
   font-weight: 800;
+  cursor: pointer;
 }
 
 .brand-mark {
@@ -115,18 +122,24 @@
   gap: clamp(16px, 2.2vw, 28px);
 }
 
-.site-nav a {
+.site-nav button {
+  padding: 0;
+  border: 0;
+  background: transparent;
   font-size: 14px;
   color: rgba(23, 17, 13, 0.62);
+  cursor: pointer;
   transition: color 180ms ease;
 }
 
-.site-nav a:hover {
+.site-nav button:hover,
+.site-nav button.active {
   color: #17110d;
 }
 
 .header-action,
-.hero-actions a {
+.hero-actions a,
+.hero-actions button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,6 +148,7 @@
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .header-action {
@@ -211,7 +225,8 @@
   margin-top: clamp(20px, 4svh, 34px);
 }
 
-.hero-actions a {
+.hero-actions a,
+.hero-actions button {
   min-width: 132px;
   padding: 0 24px;
 }
@@ -222,6 +237,7 @@
     radial-gradient(circle at 50% 0%, rgba(255, 222, 147, 0.8), transparent 36%),
     linear-gradient(180deg, #e98535, #ef8c35);
   border: 1px solid rgba(255, 174, 91, 0.8);
+  border-radius: 999px;
   box-shadow:
     0 14px 34px rgba(226, 99, 25, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -410,6 +426,140 @@
   text-align: center;
 }
 
+.about-page {
+  width: min(100% - 48px, 940px);
+  height: calc(100svh - clamp(58px, 8svh, 76px));
+  margin: 0 auto;
+  padding: clamp(18px, 4svh, 42px) 0 clamp(20px, 5svh, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(22px, 4svh, 34px);
+}
+
+.about-copy {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 13px;
+  border: 1px solid rgba(239, 109, 40, 0.24);
+  border-radius: 999px;
+  color: #9b4316;
+  background: rgba(255, 244, 230, 0.78);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.about-copy h1 {
+  margin: 0 0 16px;
+  color: #17110d;
+  font-size: clamp(42px, 5vw, 66px);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.about-copy p {
+  max-width: 690px;
+  margin: 0 auto;
+  color: rgba(23, 17, 13, 0.66);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.about-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(300px, 1.05fr);
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(95, 55, 24, 0.12);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 244, 0.78)),
+    rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 28px 80px rgba(95, 55, 24, 0.13),
+    0 0 80px rgba(237, 104, 29, 0.09);
+  backdrop-filter: blur(16px);
+}
+
+.about-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.about-stat {
+  padding: 16px;
+  border: 1px solid rgba(95, 55, 24, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.about-stat strong {
+  display: block;
+  color: #17110d;
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.about-stat span {
+  display: block;
+  margin-top: 7px;
+  color: rgba(23, 17, 13, 0.58);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.team-card {
+  min-height: 0;
+  padding: 14px;
+  border: 1px solid rgba(95, 55, 24, 0.11);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: 0 16px 42px rgba(95, 55, 24, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-card span {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(135deg, #f0a64a, #ef6d28);
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(239, 109, 40, 0.24);
+}
+
+.team-card h2 {
+  margin: 0;
+  color: #17110d;
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.team-card small {
+  color: rgba(23, 17, 13, 0.6);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 @media (max-height: 760px) and (min-width: 781px) {
   .hero {
     grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
@@ -447,6 +597,27 @@
     padding-block: 7px;
     font-size: 12px;
   }
+
+  .about-page {
+    gap: 18px;
+  }
+
+  .about-copy h1 {
+    font-size: clamp(38px, 4.5vw, 56px);
+  }
+
+  .about-copy p {
+    font-size: 16px;
+    line-height: 1.42;
+  }
+
+  .team-card {
+    padding: 12px;
+  }
+
+  .team-card small {
+    font-size: 13px;
+  }
 }
 
 @media (max-height: 640px) and (min-width: 781px) {
@@ -475,18 +646,44 @@
   .fallacy-tags {
     display: none;
   }
+
+  .about-page {
+    padding-block: 12px 18px;
+  }
+
+  .about-card {
+    padding: 10px;
+  }
+
+  .about-panel {
+    gap: 8px;
+  }
+
+  .about-stat span {
+    display: none;
+  }
+
+  .team-card {
+    min-height: auto;
+  }
 }
 
 @media (max-width: 780px) {
   .site-header {
     width: min(100% - 32px, 1060px);
     height: 58px;
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
   }
 
   .site-nav {
-    display: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .site-nav button {
+    font-size: 12px;
   }
 
   .hero {
@@ -533,6 +730,40 @@
     height: 72vw;
     top: -45vw;
   }
+
+  .about-page {
+    width: min(100% - 32px, 1120px);
+    height: calc(100svh - 58px);
+    padding: clamp(14px, 3svh, 28px) 0 clamp(16px, 3svh, 30px);
+    gap: clamp(16px, 3svh, 26px);
+    text-align: center;
+  }
+
+  .about-copy {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .about-copy h1 {
+    font-size: clamp(34px, 10vw, 52px);
+  }
+
+  .about-copy p {
+    font-size: clamp(14px, 3.4vw, 16px);
+    line-height: 1.38;
+  }
+
+  .about-card {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
 }
 
 @media (max-width: 780px) and (max-height: 760px) {
@@ -551,6 +782,21 @@
   .insight-card p,
   .fallacy-tags {
     display: none;
+  }
+
+  .about-copy p,
+  .about-stat span {
+    display: none;
+  }
+
+  .about-panel,
+  .team-grid {
+    gap: 8px;
+  }
+
+  .about-stat,
+  .team-card {
+    padding: 12px;
   }
 }
 
