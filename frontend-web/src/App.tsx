@@ -5,6 +5,7 @@ const navItems = [
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Demo', href: '#demo' },
 ]
+const fallacyTags = ['Straw man', 'False cause', 'Ad hominem']
 
 function App() {
   return (
