@@ -23,10 +23,10 @@ function Header({ currentPage, onNavigate }: HeaderProps) {
         className="brand"
         type="button"
         onClick={() => onNavigate('home')}
-        aria-label="Pikmin home"
+        aria-label="Therefore home"
       >
-        <span className="brand-mark" />
-        Pikmin
+        <span className="brand-mark">∴</span>
+        Therefore
       </button>
 
       <nav className="site-nav" aria-label="Primary navigation">

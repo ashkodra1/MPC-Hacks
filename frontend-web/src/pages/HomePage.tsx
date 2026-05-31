@@ -8,9 +8,9 @@ function HomePage({ onGetStarted }: HomePageProps) {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
-        <h1 id="hero-title">Real-time logical fallacy detection for online videos</h1>
+        <h1 id="hero-title">Think beyond the claim</h1>
         <p>
-          Pikmin highlights weak reasoning as you watch, giving students, creators,
+          Therefore highlights weak reasoning as you watch, giving students, creators,
           and curious viewers a clearer read on persuasive claims.
         </p>
 

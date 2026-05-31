@@ -19,14 +19,14 @@ function AboutPage() {
         <h1 id="about-title">The Team</h1>
         <p>
           We are four Concordia University students and members of the Women in
-          Engineering society. Pikmin is our way of making critical thinking more
+          Engineering society. Therefore is our way of making critical thinking more
           accessible while people watch, learn, and debate online.
         </p>
       </div>
 
       <div className="about-card">
         <figure className="team-photo-card">
-          <img src={teamPhoto} alt="The Pikmin team smiling together outside." />
+          <img src={teamPhoto} alt="The Therefore team smiling together outside." />
         </figure>
 
         <div className="team-grid" aria-label="Team members">
