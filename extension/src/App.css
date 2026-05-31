@@ -234,3 +234,20 @@
     font-weight: 700;
     cursor: pointer;
   }
+
+  /* Widget and drag/drop styles */
+  .widget {
+    user-select: none;
+  }
+
+  .widget.dragging {
+    opacity: 0.5;
+  }
+
+  .widget .widget-header .drag-handle {
+    font-size: 18px;
+  }
+
+  .settings-panel {
+    margin-bottom: 12px;
+  }
