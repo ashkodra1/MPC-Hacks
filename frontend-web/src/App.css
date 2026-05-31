@@ -74,13 +74,13 @@
 }
 
 .site-header {
-  width: min(100% - 48px, 1060px);
+  width: min(100% - 48px, 1120px);
   min-height: clamp(58px, 8svh, 76px);
   margin: 0 auto;
   display: grid;
   grid-template-columns: auto auto 1fr;
   align-items: center;
-  gap: 34px;
+  gap: clamp(20px, 3vw, 34px);
 }
 
 .brand,
@@ -144,6 +144,7 @@
 .site-nav {
   display: flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -158,6 +159,7 @@
   font: inherit;
   font-size: 14px;
   font-weight: 800;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background 180ms ease,
@@ -1183,7 +1185,7 @@
   }
 
   .site-header {
-    width: min(100% - 32px, 1060px);
+    width: min(100% - 32px, 1120px);
     min-height: 58px;
     grid-template-columns: 1fr;
     gap: 16px;
@@ -1191,13 +1193,13 @@
 
   .site-nav {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 8px;
   }
 
   .site-nav button {
     min-height: 34px;
-    padding-inline: 11px;
+    padding-inline: 12px;
     font-size: 12px;
   }
 
@@ -1337,7 +1339,7 @@
   }
 
   .site-header {
-    width: min(100% - 28px, 1060px);
+    width: min(100% - 28px, 1120px);
   }
 
   .hero {
