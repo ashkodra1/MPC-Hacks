@@ -1,4 +1,4 @@
-export type Page = 'home' | 'detector' | 'about'
+export type Page = 'home' | 'fallacies' | 'detector' | 'about'
 
 type NavItem = {
   label: string
@@ -8,18 +8,17 @@ type NavItem = {
 type HeaderProps = {
   currentPage: Page
   onNavigate: (page: Page) => void
-  variant?: 'default' | 'detector'
 }
 
 const navItems: NavItem[] = [
-  { label: 'How it works', page: 'home' },
+  { label: 'How it works', page: 'fallacies' },
   { label: 'Demo', page: 'detector' },
   { label: 'About', page: 'about' },
 ]
 
-function Header({ currentPage, onNavigate, variant = 'default' }: HeaderProps) {
+function Header({ currentPage, onNavigate }: HeaderProps) {
   return (
-    <header className={`site-header${variant === 'detector' ? ' detector-header' : ''}`}>
+    <header className="site-header">
       <button
         className="brand"
         type="button"

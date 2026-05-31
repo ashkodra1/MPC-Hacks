@@ -1,3 +1,5 @@
+import teamPhoto from '../assets/DSC07786.jpeg'
+
 type TeamMember = {
   name: string
   program: string
@@ -14,7 +16,7 @@ function AboutPage() {
   return (
     <section className="about-page" aria-labelledby="about-title">
       <div className="about-copy">
-        <h1 id="about-title">Helping people watch persuasive media with sharper eyes.</h1>
+        <h1 id="about-title">The Team</h1>
         <p>
           We are four Concordia University students and members of the Women in
           Engineering society. Pikmin is our way of making critical thinking more
@@ -23,20 +25,9 @@ function AboutPage() {
       </div>
 
       <div className="about-card">
-        <div className="about-panel">
-          <div className="about-stat">
-            <strong>Concordia University</strong>
-            <span>Built by students across software, computer, and computer science programs.</span>
-          </div>
-          <div className="about-stat">
-            <strong>Women in Engineering</strong>
-            <span>Created by members of a community that supports women in technical fields.</span>
-          </div>
-          <div className="about-stat">
-            <strong>Media literacy</strong>
-            <span>Focused on helping viewers recognize weak reasoning in real time.</span>
-          </div>
-        </div>
+        <figure className="team-photo-card">
+          <img src={teamPhoto} alt="The Pikmin team smiling together outside." />
+        </figure>
 
         <div className="team-grid" aria-label="Team members">
           {teamMembers.map((member) => (

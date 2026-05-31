@@ -4,6 +4,7 @@ import Header from './components/Header'
 import type { Page } from './components/Header'
 import DetectorPage from './DetectorPage'
 import AboutPage from './pages/AboutPage'
+import FallaciesPage from './pages/FallaciesPage'
 import HomePage from './pages/HomePage'
 
 function App() {
@@ -14,16 +15,14 @@ function App() {
   }
 
   return (
-    <main className="page-shell home-shell">
+    <main className={`page-shell ${page === 'home' ? 'home-shell' : 'content-shell'}`}>
       <div className="orbital orbital-top" aria-hidden="true" />
       <div className="ambient-glow" aria-hidden="true" />
 
       <Header currentPage={page} onNavigate={setPage} />
-      {page === 'home' ? (
-        <HomePage onGetStarted={() => setPage('detector')} />
-      ) : (
-        <AboutPage />
-      )}
+      {page === 'home' && <HomePage onGetStarted={() => setPage('detector')} />}
+      {page === 'fallacies' && <FallaciesPage />}
+      {page === 'about' && <AboutPage />}
     </main>
   )
 }
