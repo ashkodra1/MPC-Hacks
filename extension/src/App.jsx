@@ -209,7 +209,7 @@ function App() {
           >
             {loading ? "Analyzing..." : "Analyze Video"}
           </button>
-          {status && <p>{status}</p>}
+          {/* status is shown on the button itself; do not duplicate below */}
         </div>
       </div>
     );
