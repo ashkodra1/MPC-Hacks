@@ -11,8 +11,8 @@ type HeaderProps = {
 }
 
 const navItems: NavItem[] = [
-  { label: 'How it works', page: 'fallacies' },
-  { label: 'Demo', page: 'detector' },
+  { label: 'Logical Fallacies', page: 'fallacies' },
+  { label: 'Detect Fallacies', page: 'detector' },
   { label: 'About', page: 'about' },
 ]
 
