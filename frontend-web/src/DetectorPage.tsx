@@ -8,23 +8,33 @@ type DetectorPageProps = {
   onNavigate: (page: Page) => void
 }
 
-const detectedFallacies = [
-  {
-    time: '00:38',
-    sentence: 'If we let this one rule pass, every freedom we have will disappear.',
-    fallacy: 'Slippery slope',
-  },
-  {
-    time: '02:14',
-    sentence: 'They have never built a company, so their point about the economy is useless.',
-    fallacy: 'Ad hominem',
-  },
-  {
-    time: '04:51',
-    sentence: 'Millions of people shared this clip, which proves the claim is true.',
-    fallacy: 'Bandwagon',
-  },
-]
+type FallacyFinding = {
+  name: string
+  quote?: string | null
+  explanation?: string
+  timestamp?: string | number | null
+}
+
+type AnalyzeVideoResponse = {
+  videoId: string
+  analysis: {
+    possible_fallacies?: FallacyFinding[]
+  }
+}
+
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
+
+function parseJsonResponse(text: string) {
+  if (!text) {
+    return null
+  }
+
+  try {
+    return JSON.parse(text) as AnalyzeVideoResponse | { error?: string; details?: string }
+  } catch {
+    return { error: text }
+  }
+}
 
 function getYouTubeId(url: string) {
   const trimmedUrl = url.trim()
@@ -51,16 +61,99 @@ function getYouTubeId(url: string) {
   }
 }
 
+function formatTimestamp(timestamp: FallacyFinding['timestamp']) {
+  if (timestamp === null || timestamp === undefined || timestamp === '') {
+    return '--:--'
+  }
+
+  if (typeof timestamp === 'number') {
+    if (!Number.isFinite(timestamp)) {
+      return '--:--'
+    }
+
+    const hours = Math.floor(timestamp / 3600)
+    const minutes = Math.floor((timestamp % 3600) / 60)
+    const seconds = Math.floor(timestamp % 60)
+    const pad = (value: number) => String(value).padStart(2, '0')
+
+    return hours > 0
+      ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+      : `${pad(minutes)}:${pad(seconds)}`
+  }
+
+  const cleanedTimestamp = timestamp.replace(/[[\]]/g, '').trim()
+  const isValidTimestamp = /^\d{1,2}:\d{2}(?::\d{2})?$/.test(cleanedTimestamp)
+
+  return isValidTimestamp ? cleanedTimestamp : '--:--'
+}
+
 function DetectorPage({ currentPage, onNavigate }: DetectorPageProps) {
   const [youtubeUrl, setYoutubeUrl] = useState('')
   const [submittedUrl, setSubmittedUrl] = useState('')
   const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [findings, setFindings] = useState<FallacyFinding[]>([])
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
   const videoId = useMemo(() => getYouTubeId(submittedUrl), [submittedUrl])
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    const nextVideoId = getYouTubeId(youtubeUrl)
+
     setSubmittedUrl(youtubeUrl)
     setHasSubmitted(true)
+    setFindings([])
+    setErrorMessage('')
+
+    if (!nextVideoId) {
+      return
+    }
+
+    setIsAnalyzing(true)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/analyze-video`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: youtubeUrl }),
+      })
+
+      const responseText = await response.text()
+      const data = parseJsonResponse(responseText)
+
+      if (!response.ok) {
+        if (response.status === 502) {
+          throw new Error(
+            'The frontend could not connect to the backend. Start the backend with "cd backend" then "npm run dev", then restart the frontend.',
+          )
+        }
+
+        throw new Error(
+          data && 'error' in data && data.error
+            ? data.details || data.error
+            : `Backend returned ${response.status} ${response.statusText || 'with no response body'}`,
+        )
+      }
+
+      setFindings((data && 'analysis' in data && data.analysis.possible_fallacies) || [])
+    } catch (error) {
+      if (error instanceof TypeError) {
+        setErrorMessage(
+          `Could not reach the backend at ${API_BASE_URL}. Start the backend with "cd backend" then "npm run dev".`,
+        )
+        return
+      }
+
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong while analyzing the video.',
+      )
+    } finally {
+      setIsAnalyzing(false)
+    }
   }
 
   return (
@@ -84,7 +177,9 @@ function DetectorPage({ currentPage, onNavigate }: DetectorPageProps) {
               value={youtubeUrl}
               onChange={(event) => setYoutubeUrl(event.target.value)}
             />
-            <button type="submit">Analyze</button>
+              <button type="submit" disabled={isAnalyzing}>
+                {isAnalyzing ? 'Analyzing' : 'Analyze'}
+              </button>
           </div>
         </form>
       </section>
@@ -109,27 +204,33 @@ function DetectorPage({ currentPage, onNavigate }: DetectorPageProps) {
           <div className="results-heading">
             <div>
               <span className="eyebrow">
-                <span>{hasSubmitted && videoId ? detectedFallacies.length : 0}</span>
-                Findings
-              </span>
-              <h2>Fallacies found</h2>
+                  <span>{hasSubmitted && videoId ? findings.length : 0}</span>
+                  Findings
+                </span>
+                <h2>Fallacies found</h2>
             </div>
           </div>
 
           {hasSubmitted && !videoId ? (
             <p className="results-empty">That does not look like a YouTube link yet.</p>
-          ) : hasSubmitted ? (
+          ) : errorMessage ? (
+            <p className="results-empty">{errorMessage}</p>
+          ) : isAnalyzing ? (
+            <p className="results-empty">Analyzing the video transcript...</p>
+          ) : hasSubmitted && findings.length > 0 ? (
             <div className="fallacy-list">
-              {detectedFallacies.map((item) => (
-                <article className="fallacy-result" key={`${item.time}-${item.fallacy}`}>
+              {findings.map((item, index) => (
+                <article className="fallacy-result" key={`${item.timestamp}-${item.name}-${index}`}>
                   <div>
-                    <time>{item.time}</time>
-                    <strong>{item.fallacy}</strong>
+                    <time>{formatTimestamp(item.timestamp)}</time>
+                    <strong>{item.name}</strong>
                   </div>
-                  <p>"{item.sentence}"</p>
+                  <p>"{item.quote || item.explanation || 'No quote returned for this finding.'}"</p>
                 </article>
               ))}
             </div>
+          ) : hasSubmitted ? (
+            <p className="results-empty">No clear logical fallacies were detected.</p>
           ) : (
             <p className="results-empty">
               Your detected fallacies will appear here after you submit a video.
