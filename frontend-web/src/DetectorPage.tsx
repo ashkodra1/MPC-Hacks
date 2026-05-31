@@ -67,14 +67,11 @@ function DetectorPage({ currentPage, onNavigate }: DetectorPageProps) {
     <main className="page-shell detector-shell">
       <div className="ambient-glow" aria-hidden="true" />
 
-      <Header currentPage={currentPage} onNavigate={onNavigate} variant="detector" />
+      <Header currentPage={currentPage} onNavigate={onNavigate} />
 
       <section className="detector-intro">
         <div>
           <h1>Analyze a video for logical fallacies.</h1>
-          <p>
-            Paste a YouTube link and review each flagged sentence with its timestamp and fallacy type.
-          </p>
         </div>
 
         <form className="youtube-form" onSubmit={handleSubmit}>
@@ -103,7 +100,6 @@ function DetectorPage({ currentPage, onNavigate }: DetectorPageProps) {
             />
           ) : (
             <div className="video-empty-state">
-              <div className="play-button" />
               <p>Paste a YouTube link to load a playable video here.</p>
             </div>
           )}
