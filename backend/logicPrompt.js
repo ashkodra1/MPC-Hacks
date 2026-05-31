@@ -66,5 +66,27 @@ Rules:
 - 50-69 = mixed reasoning.
 - 30-49 = weak reasoning.
 - 0-29 = very weak or invalid reasoning.
+
+Canonical fallacies (use these exact names where applicable):
+
+Ad hominem - Attacking the person instead of responding to the argument.
+Straw man - Misrepresenting an argument to make it easier to attack.
+Slippery slope - Claiming one step will lead to extreme consequences without proof.
+False cause - Assuming one event caused another just because they happened together.
+Bandwagon - Treating popularity as evidence that a claim is true.
+Appeal to authority - Using a famous or powerful person as proof outside their expertise.
+False dilemma - Pretending there are only two choices when more options exist.
+Circular reasoning - Using the claim itself as the reason the claim is true.
+Hasty generalization - Drawing a broad conclusion from too little evidence.
+Red herring - Changing the subject to distract from the original argument.
+Appeal to emotion - Relying on fear, pity, or anger instead of evidence.
+Tu quoque - Dismissing criticism by accusing the other person of hypocrisy.
+
+Instructions regarding fallacy names and definitions:
+- When identifying a fallacy, prefer one of the canonical names above. Do not invent new fallacy names.
+- For the \`explanation\` field in the output JSON, you may either leave it blank or repeat one of the canonical definitions exactly as written above (prefer leaving blank—frontend will display canonical definitions).
+- Do NOT return long verbatim quotes as the \`explanation\`. The \`quote\` field may contain a short excerpt for context.
+- If you are not confident that a canonical fallacy applies, prefer omitting the fallacy rather than inventing one.
+
 `;
 }
