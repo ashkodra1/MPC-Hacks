@@ -44,7 +44,7 @@
   .logo {
     width: 34px;
     height: 34px;
-    border-radius: 10px;
+    border-radius: 14px;
     background: linear-gradient(135deg, var(--orange-main), var(--orange-dark));
     color: white;
     display: grid;
@@ -77,7 +77,7 @@
     position: relative;
     background: linear-gradient(135deg, #ff7b37, #ffb36b);
     color: white;
-    border-radius: 22px;
+    border-radius: 28px;
     padding: 18px;
     margin-bottom: 14px;
     box-shadow: var(--shadow-soft);
@@ -120,7 +120,7 @@
   .score-metrics span {
     background: rgba(255, 255, 255, 0.22);
     padding: 7px 5px;
-    border-radius: 10px;
+    border-radius: 999px;
   }
   
   .card,
@@ -128,7 +128,7 @@
     background: var(--card-bg);
     backdrop-filter: blur(18px);
     border: 1px solid var(--border-soft);
-    border-radius: 18px;
+    border-radius: 24px;
     padding: 14px;
     margin-bottom: 14px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -152,13 +152,104 @@
     flex-direction: column;
     gap: 8px;
   }
+
+  .fallacy-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .fallacy-result {
+    padding: 15px;
+    border: 1px solid rgba(127, 75, 35, 0.14);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.66);
+  }
+
+  .fallacy-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+
+  .fallacy-result-header span {
+    color: #b84c19;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .fallacy-result-header strong {
+    color: #24160f;
+    font-size: 14px;
+    text-align: right;
+  }
+
+  .quote-box {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+    margin: 0;
+    padding: 12px;
+    border: none;
+    border-left: 3px solid #b84c19;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.72);
+    color: rgba(36, 22, 15, 0.84);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: left;
+  }
+
+  .quote-box:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .quote-box-icon {
+    color: #b84c19;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  .fallacy-breakdown {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .fallacy-breakdown section {
+    display: grid;
+    gap: 4px;
+  }
+
+  .fallacy-breakdown h3 {
+    margin: 0;
+    color: rgba(36, 22, 15, 0.72);
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .fallacy-breakdown p {
+    margin: 0;
+    color: rgba(36, 22, 15, 0.72);
+    font-size: 13px;
+    line-height: 1.45;
+  }
   
   .timeline-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 11px;
-    border-radius: 14px;
+    border-radius: 20px;
     background: rgba(255, 255, 255, 0.78);
     border: 1px solid rgba(255, 138, 61, 0.14);
   }
@@ -229,10 +320,25 @@
     background: var(--orange-main);
     color: white;
     border: none;
-    border-radius: 14px;
+    border-radius: 999px;
     padding: 11px 14px;
     font-weight: 700;
     cursor: pointer;
+  }
+
+  .analysis-actions {
+    margin-bottom: 14px;
+  }
+
+  .analysis-actions .primary-button {
+    margin-top: 0;
+  }
+
+  .analysis-actions p {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-align: center;
   }
 
   /* Widget and drag/drop styles */

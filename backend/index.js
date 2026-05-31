@@ -13,6 +13,129 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+function isMissingTimestamp(timestamp) {
+  return (
+    timestamp === null ||
+    timestamp === undefined ||
+    timestamp === "" ||
+    String(timestamp).trim().toLowerCase() === "null"
+  );
+}
+
+function cleanTimestamp(timestamp) {
+  if (isMissingTimestamp(timestamp)) return null;
+
+  const match = String(timestamp)
+    .replace(/[[\]]/g, "")
+    .match(/\b(\d{1,2}:\d{2}(?::\d{2})?)\b/);
+
+  return match ? match[1] : String(timestamp).trim();
+}
+
+function normalizeText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function parseTranscriptSegments(transcript) {
+  const segments = [];
+  const segmentPattern =
+    /\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*([\s\S]*?)(?=\s*\[\d{1,2}:\d{2}(?::\d{2})?\]\s*|$)/g;
+
+  for (const match of transcript.matchAll(segmentPattern)) {
+    segments.push({
+      timestamp: match[1],
+      text: match[2].trim(),
+      normalizedText: normalizeText(match[2]),
+    });
+  }
+
+  return segments;
+}
+
+function findTimestampForFallacy(fallacy, transcriptSegments) {
+  const searchText = normalizeText(
+    fallacy.quote ||
+      fallacy.excerpt ||
+      fallacy.contextDescription ||
+      fallacy.claim ||
+      fallacy.explanation
+  );
+
+  if (!searchText) return null;
+
+  const directMatch = transcriptSegments.find(
+    (segment) =>
+      segment.normalizedText.includes(searchText) ||
+      searchText.includes(segment.normalizedText)
+  );
+
+  if (directMatch) return directMatch.timestamp;
+
+  const queryWords = new Set(
+    searchText
+      .split(" ")
+      .filter((word) => word.length > 3)
+  );
+
+  let bestSegment = null;
+  let bestScore = 0;
+
+  for (const segment of transcriptSegments) {
+    const segmentWords = new Set(segment.normalizedText.split(" "));
+    let score = 0;
+
+    for (const word of queryWords) {
+      if (segmentWords.has(word)) score += 1;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestSegment = segment;
+    }
+  }
+
+  return bestScore >= 2 ? bestSegment.timestamp : null;
+}
+
+function normalizeVideoAnalysisTimestamps(analysis, transcript) {
+  const transcriptSegments = parseTranscriptSegments(transcript);
+  const possibleFallacies =
+    analysis?.possible_fallacies ||
+    analysis?.fallacies ||
+    analysis?.analysis?.fallacies ||
+    [];
+
+  return {
+    ...analysis,
+    possible_fallacies: possibleFallacies.map((fallacy) => {
+      const timestamp =
+        cleanTimestamp(
+          fallacy.timestamp ??
+            fallacy.time_stamp ??
+            fallacy.timeStamp ??
+            fallacy.start ??
+            fallacy.time ??
+            fallacy.seconds ??
+            fallacy.quote ??
+            fallacy.excerpt ??
+            fallacy.contextDescription
+        ) || findTimestampForFallacy(fallacy, transcriptSegments);
+
+      return {
+        ...fallacy,
+        timestamp,
+      };
+    }),
+  };
+}
+
 app.get("/", (req, res) => {
   res.send("Backend is working");
 });
@@ -81,7 +204,8 @@ app.post("/analyze-video", async (req, res) => {
     
     console.log("[analyze-video] Transcript length:", transcript.length);
     console.log("[analyze-video] Analyzing logic...");
-    const analysis = await analyzeLogic(transcript);
+    const rawAnalysis = await analyzeLogic(transcript);
+    const analysis = normalizeVideoAnalysisTimestamps(rawAnalysis, transcript);
 
     console.log("[analyze-video] videoId:", videoId);
     console.log(

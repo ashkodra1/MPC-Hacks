@@ -10,6 +10,8 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 function cleanJson(text) {
   // Remove markdown code fences
   let cleaned = text
@@ -90,7 +92,7 @@ export async function analyzeLogic(userText) {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: MODEL,
       contents: prompt,
     });
 
@@ -108,6 +110,17 @@ export async function analyzeLogic(userText) {
     }
   } catch (error) {
     console.error("AI Generation Error:", error.message);
+    const message = String(error.message || "");
+
+    if (message.includes('"code":429') || message.includes("RESOURCE_EXHAUSTED")) {
+      const retryDelay = message.match(/"retryDelay":"([^"]+)"/)?.[1];
+      const retryHint = retryDelay ? ` Try again in about ${retryDelay}.` : "";
+
+      throw new Error(
+        `Gemini quota exceeded for ${MODEL}.${retryHint} If this keeps happening, enable billing, wait for quota reset, or use an API key from a different Google Cloud project.`
+      );
+    }
+
     throw error;
   }
 }

@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import FALLACY_DEFINITIONS from "../fallacyDefinitions";
 
+function getDirectQuote(item) {
+  return String(item.quote || item.excerpt || "")
+    .replace(/^\s*\[\d{1,2}:\d{2}(?::\d{2})?\]\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function FallacyTimeline({ analysis }) {
   const fallacies = analysis?.possible_fallacies || [];
   const [openMap, setOpenMap] = useState({});
@@ -10,20 +17,12 @@ function FallacyTimeline({ analysis }) {
   };
 
   if (fallacies.length === 0) {
-    return (
-      <section className="card">
-        <h3>Timeline</h3>
-        <p>No fallacies detected</p>
-      </section>
-    );
+    return <p>No fallacies detected</p>;
   }
 
   return (
-    <section className="card">
-      <h3>Timeline</h3>
-
-      <div className="timeline-list">
-        {fallacies.map((item, index) => {
+    <div className="fallacy-list">
+      {fallacies.map((item, index) => {
           const severity =
             item.severity?.charAt(0).toUpperCase() +
               item.severity?.slice(1).toLowerCase() || "Low";
@@ -34,9 +33,7 @@ function FallacyTimeline({ analysis }) {
           const canonical = FALLACY_DEFINITIONS[title] || null;
 
           const definition = canonical || item.explanation || "No definition provided.";
-
-          // Sanitize timestamp display (handle 'null' string)
-          const displayTimestamp = item.timestamp && item.timestamp !== "null" ? item.timestamp : null;
+          const quote = getDirectQuote(item);
 
           // Paraphrased, non-quoted 'what happened' and concise 'why it's wrong'
           const lc = title.toLowerCase();
@@ -107,13 +104,13 @@ function FallacyTimeline({ analysis }) {
             } else if (/because\b|therefore\b|so (it|they)/.test(q)) {
               whatHappened = "The speaker presented a causal or consequential claim without offering sufficient evidence.";
             } else {
-              whatHappened = templates[lc] ? templates[lc].what : (displayTimestamp ? `Around ${displayTimestamp}, the speaker made a move that fits this fallacy.` : `This segment contains behavior that fits the ${title} fallacy.`);
+              whatHappened = templates[lc] ? templates[lc].what : `This segment contains behavior that fits the ${title} fallacy.`;
             }
           } else if (templates[lc]) {
             whatHappened = templates[lc].what;
             whyItsWrong = templates[lc].why;
           } else {
-            whatHappened = displayTimestamp ? `Around ${displayTimestamp}, the speaker made a move that fits this fallacy.` : `This segment contains behavior that fits the ${title} fallacy.`;
+            whatHappened = `This segment contains behavior that fits the ${title} fallacy.`;
           }
 
           if (!whyItsWrong) {
@@ -124,149 +121,43 @@ function FallacyTimeline({ analysis }) {
           const isOpen = !!openMap[index];
 
           return (
-            <div
-              key={index}
-              style={{
-                borderRadius: 14,
-                overflow: "hidden",
-              }}
-            >
-              <div
-                className="timeline-row"
-                style={{ cursor: "default" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <strong style={{ fontSize: 14 }}>
-                      {title}
-                    </strong>
-
-                    <span
-                      style={{
-                        fontSize: 12,
-                        color: "#666",
-                      }}
-                    >
-                      {displayTimestamp ? `• ${displayTimestamp}` : ""}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                  }}
-                >
-                  <span
-                    className={`pill ${severity.toLowerCase()}`}
-                  >
-                    {severity}
-                  </span>
-
-                  <button
-                    aria-expanded={isOpen}
-                    onClick={() => toggle(index)}
-                    style={{
-                      border: "none",
-                      background: "transparent",
-                      cursor: "pointer",
-                      fontSize: 16,
-                    }}
-                    title={isOpen ? "Collapse" : "Expand"}
-                  >
-                    {isOpen ? "▾" : "▸"}
-                  </button>
-                </div>
+            <article className="fallacy-result" key={`${title}-${index}`}>
+              <div className="fallacy-result-header">
+                <span>Quote</span>
+                <strong>{title}</strong>
               </div>
 
+              <button
+                type="button"
+                className="quote-box"
+                aria-expanded={isOpen}
+                onClick={() => toggle(index)}
+              >
+                <span>{quote || "No direct quote returned for this finding."}</span>
+                <span className="quote-box-icon">{isOpen ? "▾" : "▸"}</span>
+              </button>
+
               {isOpen && (
-                <div
-                  style={{
-                    padding: 12,
-                    background: "rgba(255,255,255,0.9)",
-                    border:
-                      "1px solid rgba(0,0,0,0.06)",
-                  }}
-                >
-                  <div style={{ marginBottom: 8 }}>
-                    <strong
-                      style={{
-                        display: "block",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Definition of {title}
-                    </strong>
-
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: "#222",
-                      }}
-                    >
-                      {definition}
-                    </div>
-                  </div>
-
-                  <div>
-                    <strong
-                      style={{
-                        display: "block",
-                        marginBottom: 4,
-                      }}
-                    >
-                      What happened
-                    </strong>
-
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: "#333",
-                        marginBottom: 8,
-                      }}
-                    >
-                      {whatHappened}
-                    </div>
-
-                    <strong
-                      style={{
-                        display: "block",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Why it's wrong
-                    </strong>
-
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: "#333",
-                      }}
-                    >
-                      {whyItsWrong}
-                    </div>
-                  </div>
+                <div className="fallacy-breakdown">
+                  <section>
+                    <h3>Definition</h3>
+                    <p>{definition}</p>
+                  </section>
+                  <section>
+                    <h3>What happened</h3>
+                    <p>{whatHappened}</p>
+                  </section>
+                  <section>
+                    <h3>Why it is wrong</h3>
+                    <p>{whyItsWrong}</p>
+                  </section>
+                  <span className={`pill ${severity.toLowerCase()}`}>{severity}</span>
                 </div>
               )}
-            </div>
+            </article>
           );
         })}
-      </div>
-    </section>
+    </div>
   );
 }
 

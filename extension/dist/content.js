@@ -21,7 +21,21 @@ chrome.runtime.onMessage.addListener((message) => {
 function timestampToSeconds(timestamp) {
   if (!timestamp) return null;
 
-  const parts = timestamp.split(":").map(Number);
+  if (typeof timestamp === "number") {
+    return Number.isFinite(timestamp) ? timestamp : null;
+  }
+
+  const cleaned = String(timestamp).replace(/[[\]]/g, "").trim();
+  const timestampMatch = cleaned.match(/\b(\d{1,2}:\d{2}(?::\d{2})?)\b/);
+  const value = timestampMatch ? timestampMatch[1] : cleaned;
+  const numericValue = Number(value);
+
+  if (Number.isFinite(numericValue)) {
+    return numericValue;
+  }
+
+  const parts = value.split(":").map(Number);
+  if (!parts.every(Number.isFinite)) return null;
 
   if (parts.length === 2) {
     return parts[0] * 60 + parts[1];

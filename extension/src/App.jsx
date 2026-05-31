@@ -5,9 +5,45 @@ import LogicScore from "./components/LogicScore";
 import LogicSummary from "./components/LogicSummary";
 import FallacyTimeline from "./components/FallacyTimeline";
 import WidgetWrapper from "./components/WidgetWrapper";
+import { getFallacyTimestamp } from "./timestamps";
+
+const ANALYSIS_STORAGE_KEY = "lastVideoAnalysis";
+
+function getRawFallacies(analysis) {
+  return (
+    analysis?.possible_fallacies ||
+    analysis?.fallacies ||
+    analysis?.analysis?.fallacies ||
+    []
+  );
+}
+
+function normalizeAnalysis(analysis) {
+  if (!analysis) return analysis;
+
+  return {
+    ...analysis,
+    possible_fallacies: getRawFallacies(analysis).map((fallacy) => ({
+      ...fallacy,
+      timestamp: getFallacyTimestamp(fallacy),
+    })),
+  };
+}
+
+function readStoredAnalysis() {
+  const storedAnalysis = localStorage.getItem(ANALYSIS_STORAGE_KEY);
+  if (!storedAnalysis) return null;
+
+  try {
+    return normalizeAnalysis(JSON.parse(storedAnalysis));
+  } catch {
+    localStorage.removeItem(ANALYSIS_STORAGE_KEY);
+    return null;
+  }
+}
 
 function App() {
-  const [analysis, setAnalysis] = useState(null);
+  const [analysis, setAnalysis] = useState(() => readStoredAnalysis());
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const [order, setOrder] = useState(() => null);
@@ -41,21 +77,21 @@ function App() {
         throw new Error(data.details || data.error || "Backend error");
       }
 
-      setAnalysis(data.analysis);
+      const normalizedAnalysis = normalizeAnalysis(data.analysis);
+
+      setAnalysis(normalizedAnalysis);
+      localStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(normalizedAnalysis));
       setStatus(`Analysis complete!`);
 
       // Send fallacies to content script
-      const rawFallacies = data.analysis?.possible_fallacies || 
-                           data.analysis?.fallacies || 
-                           data.analysis?.analysis?.fallacies || 
-                           [];
+      const rawFallacies = normalizedAnalysis?.possible_fallacies || [];
 
       const fallacies = rawFallacies.map((f) => ({
         type: f.type || f.name || "Unknown fallacy",
         quote: f.quote || f.excerpt || "",
         explanation: f.explanation || "",
         confidence: typeof f.confidence === "number" ? f.confidence : 0.8,
-        timestamp: f.timestamp || f.start || f.time || null,
+        timestamp: getFallacyTimestamp(f),
       }));
 
       // Try to send message to content script, but don't fail if it's not there
@@ -71,7 +107,6 @@ function App() {
     } catch (err) {
       console.error(err);
       setStatus("Error: " + err.message);
-      setAnalysis(null);
     } finally {
       setLoading(false);
     }
@@ -80,12 +115,16 @@ function App() {
   useEffect(() => {
     // Check if data was already set
     if (window.extensionAnalysis) {
-      setAnalysis(window.extensionAnalysis);
+      const normalizedAnalysis = normalizeAnalysis(window.extensionAnalysis);
+      setAnalysis(normalizedAnalysis);
+      localStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(normalizedAnalysis));
     }
 
     // Listen for updates from popup.js
     const handleAnalysisReady = (event) => {
-      setAnalysis(event.detail);
+      const normalizedAnalysis = normalizeAnalysis(event.detail);
+      setAnalysis(normalizedAnalysis);
+      localStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(normalizedAnalysis));
     };
 
     window.addEventListener("analysisReady", handleAnalysisReady);
@@ -194,18 +233,10 @@ function App() {
         <Header />
         <div className="card" style={{ padding: "20px", textAlign: "center" }}>
           <button 
+            className="primary-button"
             onClick={analyzeVideo}
             disabled={loading}
-            style={{
-              padding: "12px 24px",
-              fontSize: "16px",
-              backgroundColor: "#ff8a3d",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.6 : 1,
-            }}
+            style={{ opacity: loading ? 0.6 : 1 }}
           >
             {loading ? "Analyzing..." : "Analyze Video"}
           </button>
@@ -224,6 +255,18 @@ function App() {
   return (
     <div className="extension-panel">
       <Header onOpenSettings={() => setShowSettings((s) => !s)} />
+
+      <div className="analysis-actions">
+        <button
+          className="primary-button"
+          onClick={analyzeVideo}
+          disabled={loading}
+          style={{ opacity: loading ? 0.6 : 1 }}
+        >
+          {loading ? "Analyzing..." : "Reanalyze"}
+        </button>
+        {status && !loading && <p>{status}</p>}
+      </div>
 
       {showSettings && (
         <div className="card settings-panel">
