@@ -9,6 +9,30 @@ import { getFallacyTimestamp } from "./timestamps";
 
 const ANALYSIS_STORAGE_KEY = "lastVideoAnalysis";
 
+function getVideoKey(url) {
+  if (!url) return "";
+
+  try {
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.hostname.includes("youtu.be")) {
+      return `youtube:${parsedUrl.pathname.replace("/", "")}`;
+    }
+
+    if (parsedUrl.hostname.includes("youtube.com")) {
+      const watchId = parsedUrl.searchParams.get("v");
+      if (watchId) return `youtube:${watchId}`;
+
+      const pathMatch = parsedUrl.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/);
+      if (pathMatch?.[1]) return `youtube:${pathMatch[1]}`;
+    }
+
+    return `url:${parsedUrl.href}`;
+  } catch {
+    return `url:${url}`;
+  }
+}
+
 function getRawFallacies(analysis) {
   return (
     analysis?.possible_fallacies ||
@@ -30,20 +54,41 @@ function normalizeAnalysis(analysis) {
   };
 }
 
-function readStoredAnalysis() {
-  const storedAnalysis = localStorage.getItem(ANALYSIS_STORAGE_KEY);
-  if (!storedAnalysis) return null;
+function readStoredAnalysisEntry() {
+  const storedEntry = localStorage.getItem(ANALYSIS_STORAGE_KEY);
+  if (!storedEntry) return null;
 
   try {
-    return normalizeAnalysis(JSON.parse(storedAnalysis));
+    const parsedEntry = JSON.parse(storedEntry);
+
+    if (!parsedEntry?.analysis || !parsedEntry?.videoKey) {
+      return null;
+    }
+
+    return {
+      ...parsedEntry,
+      analysis: normalizeAnalysis(parsedEntry.analysis),
+    };
   } catch {
     localStorage.removeItem(ANALYSIS_STORAGE_KEY);
     return null;
   }
 }
 
+function saveAnalysisEntry(tab, analysis) {
+  localStorage.setItem(
+    ANALYSIS_STORAGE_KEY,
+    JSON.stringify({
+      videoKey: getVideoKey(tab?.url),
+      url: tab?.url || "",
+      title: tab?.title || "",
+      analysis,
+    })
+  );
+}
+
 function App() {
-  const [analysis, setAnalysis] = useState(() => readStoredAnalysis());
+  const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const [order, setOrder] = useState(() => null);
@@ -80,7 +125,7 @@ function App() {
       const normalizedAnalysis = normalizeAnalysis(data.analysis);
 
       setAnalysis(normalizedAnalysis);
-      localStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(normalizedAnalysis));
+      saveAnalysisEntry(tab, normalizedAnalysis);
       setStatus(`Analysis complete!`);
 
       // Send fallacies to content script
@@ -113,18 +158,37 @@ function App() {
   };
 
   useEffect(() => {
+    const loadStoredAnalysisForCurrentVideo = async () => {
+      try {
+        const [tab] = await chrome.tabs.query({
+          active: true,
+          currentWindow: true,
+        });
+        const storedEntry = readStoredAnalysisEntry();
+
+        if (storedEntry?.videoKey === getVideoKey(tab?.url)) {
+          setAnalysis(storedEntry.analysis);
+        } else {
+          setAnalysis(null);
+          setStatus("");
+        }
+      } catch (err) {
+        console.warn("[App] Could not load stored analysis:", err.message);
+      }
+    };
+
+    loadStoredAnalysisForCurrentVideo();
+
     // Check if data was already set
     if (window.extensionAnalysis) {
       const normalizedAnalysis = normalizeAnalysis(window.extensionAnalysis);
       setAnalysis(normalizedAnalysis);
-      localStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(normalizedAnalysis));
     }
 
     // Listen for updates from popup.js
     const handleAnalysisReady = (event) => {
       const normalizedAnalysis = normalizeAnalysis(event.detail);
       setAnalysis(normalizedAnalysis);
-      localStorage.setItem(ANALYSIS_STORAGE_KEY, JSON.stringify(normalizedAnalysis));
     };
 
     window.addEventListener("analysisReady", handleAnalysisReady);
