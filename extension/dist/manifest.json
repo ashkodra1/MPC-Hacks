@@ -3,13 +3,17 @@
   "name": "Fallacy Detector",
   "version": "1.0",
   "permissions": ["tabs", "activeTab", "scripting"],
+  "icons": {
+    "128": "thereforeLogo.png"
+  },
   "host_permissions": [
     "http://localhost:3000/*",
     "http://localhost:3001/*",
     "https://www.youtube.com/*"
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "thereforeLogo.png"
   },
   "content_scripts": [
     {
