@@ -75,10 +75,15 @@
   
   .score-card {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 114px;
     background: linear-gradient(135deg, #ff7b37, #ffb36b);
     color: white;
     border-radius: 28px;
-    padding: 18px;
+    padding: 18px 28px;
     margin-bottom: 14px;
     box-shadow: var(--shadow-soft);
   }
@@ -92,12 +97,13 @@
   .score-card h2 {
     margin: 0;
     font-size: 30px;
+    line-height: 1;
+    white-space: nowrap;
   }
   
   .score-ring {
-    position: absolute;
-    right: 18px;
-    top: 20px;
+    position: static;
+    flex: 0 0 auto;
     width: 58px;
     height: 58px;
     border-radius: 50%;
