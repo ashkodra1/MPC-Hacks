@@ -201,6 +201,13 @@
   transform: translateY(-1px);
 }
 
+.hero-actions button:disabled,
+.youtube-form button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
+}
+
 .header-action {
   min-height: 40px;
 }

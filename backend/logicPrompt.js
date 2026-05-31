@@ -71,6 +71,9 @@ Rules:
 - An argument may contain zero fallacies.
 - Distinguish between weak reasoning and a logical fallacy.
 - Use timestamp values when the transcript includes them.
+- The transcript is formatted like "[MM:SS] sentence" or "[HH:MM:SS] sentence".
+- For each possible fallacy, copy the nearest timestamp exactly from the transcript into "timestamp".
+- Return timestamp as a string like "03:42" or "01:03:42", never as a number.
 - If you cannot locate a timestamp, return an empty string or null.
 - The logic_score must be from 0 to 100.
 - 90-100 = very strong reasoning.
