@@ -117,21 +117,23 @@
   border: 0;
   color: inherit;
   background: transparent;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 800;
   cursor: pointer;
 }
 
 .brand-mark {
-  width: 17px;
-  height: 17px;
-  display: inline-block;
-  border-radius: 50% 50% 50% 8px;
-  background:
-    radial-gradient(circle at 35% 32%, #ffffff 0 13%, transparent 14%),
-    linear-gradient(135deg, #ffe38d, #f16d24 58%, #8f2a12);
-  transform: rotate(34deg);
-  box-shadow: 0 0 24px rgba(241, 109, 36, 0.62);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff8a3d, #f26a21);
+  box-shadow: 0 0 10px rgba(241, 109, 36, 0.18);
+  font-size: 20px;
+  line-height: 1;
+  color: #fff;
+  transform: none;
 }
 
 .site-nav {
@@ -1423,7 +1425,7 @@
   }
 
   .brand {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .hero h1 {
