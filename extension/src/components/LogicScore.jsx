@@ -7,7 +7,6 @@ function LogicScore({ analysis }) {
   return (
     <section className="score-card">
       <div>
-        <p className="section-label">Logic Score</p>
         <h2>{scoreStr} Logical</h2>
       </div>
 
