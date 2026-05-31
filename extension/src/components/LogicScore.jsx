@@ -12,13 +12,6 @@ function LogicScore({ analysis }) {
       </div>
 
       <div className="score-ring">{Math.round(score)}</div>
-
-      <div className="score-metrics">
-        <span>Reasoning</span>
-        <span>Evidence</span>
-        <span>Assumptions</span>
-        <span>Risk</span>
-      </div>
     </section>
   );
 }
